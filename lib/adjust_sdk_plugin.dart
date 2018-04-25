@@ -25,7 +25,10 @@ class AdjustSdkPlugin {
     Map<String, String> configParamsMap = {
       'appToken': config.appToken,
       'environment': config.environmentString,
+      'logLevel': config.logLevelString,
       'userAgent': 'flutter',
+      'defaultTracker': config.defaultTracker,
+      'isDeviceKnown': config.isDeviceKnown.toString(),
     };
     _channel.invokeMethod('onCreate', configParamsMap);
   }

@@ -1,12 +1,4 @@
-enum AdjustLogLevel {
-  verbose,
-  debug,
-  info,
-  warn,
-  error,
-  asrt, // assert log level; assert is a keyword in dart
-  suppress,
-}
+enum AdjustLogLevel { VERBOSE, DEBUG, INFO, WARN, ERROR, ASSERT, SUPRESS }
 
 enum AdjustEnvironment { production, sandbox }
 
@@ -47,5 +39,9 @@ class AdjustConfig {
     return environment
         .toString()
         .substring(environment.toString().indexOf('.') + 1);
+  }
+
+  String get logLevelString {
+    return logLevel.toString().substring(logLevel.toString().indexOf('.') + 1);
   }
 }
