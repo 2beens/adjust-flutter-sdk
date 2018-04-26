@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:adjust_sdk_plugin/adjustConfig.dart';
+import 'package:adjust_sdk_plugin/adjustEvent.dart';
 import 'package:flutter/services.dart';
 
 class AdjustSdkPlugin {
@@ -13,7 +14,13 @@ class AdjustSdkPlugin {
   }
 
   static void onResume() {
+    print('Calling "ON RESUME" from flutter...');
     _channel.invokeMethod('onResume');
+  }
+
+  static void onPause() {
+    print('Calling "ON PAUSE" from flutter...');
+    _channel.invokeMethod('onPause');
   }
 
   static Future<bool> isEnabled() async {
@@ -21,15 +28,15 @@ class AdjustSdkPlugin {
     return isEnabled;
   }
 
+  static void setIsEnabled(bool isEnabled) {
+    _channel.invokeMethod('setIsEnabled', {'isEnabled': isEnabled});
+  }
+
   static void onCreate(AdjustConfig config) {
-    Map<String, String> configParamsMap = {
-      'appToken': config.appToken,
-      'environment': config.environmentString,
-      'logLevel': config.logLevelString,
-      'userAgent': 'flutter',
-      'defaultTracker': config.defaultTracker,
-      'isDeviceKnown': config.isDeviceKnown.toString(),
-    };
-    _channel.invokeMethod('onCreate', configParamsMap);
+    _channel.invokeMethod('onCreate', config.configParamsMap);
+  }
+
+  static void trackEvent(AdjustEvent adjustEvent) {
+    _channel.invokeMethod('trackEvent', adjustEvent.adjustEventParamsMap);
   }
 }

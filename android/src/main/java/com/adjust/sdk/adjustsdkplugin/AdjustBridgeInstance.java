@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.adjust.sdk.Adjust;
 import com.adjust.sdk.AdjustConfig;
+import com.adjust.sdk.AdjustEvent;
 import com.adjust.sdk.LogLevel;
 
 import java.util.Map;
@@ -37,11 +38,33 @@ public class AdjustBridgeInstance {
         Adjust.onCreate(config);
     }
 
+    public void trackEvent(Map eventParamsMap) {
+        String revenue = (String) eventParamsMap.get("revenue");
+        String currency = (String) eventParamsMap.get("currency");
+        String orderId = (String) eventParamsMap.get("orderId");
+        String eventToken = (String) eventParamsMap.get("eventToken");
+
+        AdjustEvent event = new AdjustEvent(eventToken);
+        event.setRevenue(Double.valueOf(revenue), currency);
+        event.setOrderId(orderId);
+
+        Adjust.trackEvent(event);
+    }
+
     public boolean isEnabled() {
         return Adjust.isEnabled();
     }
 
     public void onResume() {
         Adjust.onResume();
+    }
+
+    public void onPause() {
+        Adjust.onPause();
+    }
+
+    public void setEnabled(Map isEnabledParamsMap) {
+        boolean isEnabled = (boolean) isEnabledParamsMap.get("isEnabled");
+        Adjust.setEnabled(isEnabled);
     }
 }

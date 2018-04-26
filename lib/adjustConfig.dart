@@ -44,4 +44,15 @@ class AdjustConfig {
   String get logLevelString {
     return logLevel.toString().substring(logLevel.toString().indexOf('.') + 1);
   }
+
+  Map<String, String> get configParamsMap {
+    return {
+      'appToken': appToken,
+      'environment': environmentString,
+      'logLevel': logLevelString,
+      'userAgent': 'flutter',
+      'defaultTracker': defaultTracker,
+      'isDeviceKnown': isDeviceKnown.toString(),
+    };
+  }
 }

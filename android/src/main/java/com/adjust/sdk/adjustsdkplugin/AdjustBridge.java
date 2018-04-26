@@ -2,6 +2,9 @@ package com.adjust.sdk.adjustsdkplugin;
 
 import android.content.Context;
 
+import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustEvent;
+
 import java.util.Map;
 
 /**
@@ -26,7 +29,19 @@ public class AdjustBridge {
         getDefaultInstance().onResume();
     }
 
+    public static void onPause() {
+        getDefaultInstance().onPause();
+    }
+
+    public static void trackEvent(Map eventParamsMap) {
+        getDefaultInstance().trackEvent(eventParamsMap);
+    }
+
     public static boolean isEnabled() {
         return getDefaultInstance().isEnabled();
+    }
+
+    public static void setIsEnabled(Map isEnabledParamsMap) {
+        getDefaultInstance().setEnabled(isEnabledParamsMap);
     }
 }

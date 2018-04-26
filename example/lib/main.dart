@@ -1,4 +1,7 @@
 import 'package:adjust_sdk_plugin/adjustConfig.dart';
+import 'package:adjust_sdk_plugin/adjustEvent.dart';
+import 'package:adjust_sdk_plugin_example/util.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:adjust_sdk_plugin/adjust_sdk_plugin.dart';
@@ -13,6 +16,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   String _platformVersion = 'Unknown';
   AppLifecycleState _lastLifecycleState;
+  bool _isSdkEnabled = true;
 
   @override
   initState() {
@@ -40,7 +44,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           AdjustSdkPlugin.onResume();
           break;
         case AppLifecycleState.paused:
-          //TODO:
+          AdjustSdkPlugin.onPause();
           break;
         case AppLifecycleState.suspending:
           //TODO:
@@ -82,6 +86,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
       // start the Adjust SDK
       AdjustSdkPlugin.onResume();
+
+      // ask if enabled
+      AdjustSdkPlugin.isEnabled().then((isEnabled) {
+        _isSdkEnabled = isEnabled;
+      });
     });
   }
 
@@ -100,32 +109,46 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     'This widget has not observed any lifecycle changes.')
                 : new Text(
                     'The most recent lifecycle state this widget observed was: $_lastLifecycleState.'),
-            _buildActionButton1(),
+
+            Util.buildRaisedButton('Is Enabled ?', () => _printIsSdkEnabled()),
+
+            // track simple event button
+            Util.buildRaisedButton(
+                'Track Sample Event',
+                () => AdjustSdkPlugin.trackEvent(
+                    new AdjustEvent('c4thih', 10, 'EUR', ''))),
+
+            // is SDK enabled switch
+            new Text(
+              _isSdkEnabled ? 'Enabled' : 'Disabled',
+              style: _isSdkEnabled
+                  ? new TextStyle(fontSize: 32.0, color: Colors.green)
+                  : new TextStyle(fontSize: 32.0, color: Colors.red),
+            ),
+            new CupertinoSwitch(
+              value: _isSdkEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  AdjustSdkPlugin.setIsEnabled(value);
+                  _isSdkEnabled = value;
+                  print('switch state = $_isSdkEnabled');
+                });
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActionButton1() {
-    return new Align(
-      alignment: const Alignment(0.0, -0.2),
-      child: new FloatingActionButton(
-        child: const Icon(Icons.add_circle),
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          print('action button 3 (ADJUST) pressed');
-
-          try {
-            AdjustSdkPlugin.isEnabled().then((isEnabled) {
-              print('Adjust is enabled = $isEnabled');
-            });
-          } on PlatformException {
-            print('no such method found im plugin: fireAndForget1');
-          }
-        },
-      ),
-    );
+  _printIsSdkEnabled() {
+    try {
+      AdjustSdkPlugin.isEnabled().then((isEnabled) {
+        print('Adjust is enabled = $isEnabled');
+      });
+    } on PlatformException {
+      print('no such method found im plugin: isEnabled');
+    }
   }
+
 }

@@ -39,8 +39,11 @@ public class AdjustSdkPlugin implements MethodCallHandler {
     switch (call.method) {
       case "getPlatformVersion": getPlatformVersion(result); break;
       case "onCreate": onCreate(call, result); break;
-      case "isEnabled": isEnabled(result); break;
+      case "onPause": onPause(result); break;
       case "onResume": onResume(result); break;
+      case "trackEvent": trackEvent(call, result); break;
+      case "isEnabled": isEnabled(result); break;
+      case "setIsEnabled": setIsEnabled(call, result); break;
       default:
         error("Not implemented method: " + call.method);
         result.notImplemented();
@@ -59,10 +62,26 @@ public class AdjustSdkPlugin implements MethodCallHandler {
 
   private void onResume(Result result) {
     AdjustBridge.onResume();
+    result.success(null);
+  }
+
+  private void onPause(Result result) {
+    AdjustBridge.onPause();
+    result.success(null);
+  }
+
+  private void trackEvent(MethodCall call, Result result) {
+    AdjustBridge.trackEvent((Map)call.arguments);
+    result.success(null);
   }
 
   private void isEnabled(Result result) {
     result.success(AdjustBridge.isEnabled());
+  }
+
+  private void setIsEnabled(MethodCall call, Result result) {
+    AdjustBridge.setIsEnabled((Map)call.arguments);
+    result.success(null);
   }
 
   public static void log(String message) {
